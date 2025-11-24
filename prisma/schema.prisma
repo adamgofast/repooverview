@@ -1,0 +1,62 @@
+// This is your Prisma schema file,
+// learn more about it in the docs: https://pris.ly/d/prisma-schema
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "sqlite"
+  url      = env("DATABASE_URL")
+}
+
+model Project {
+  id              String   @id @default(cuid())
+  name            String
+  summary         String?
+  projectType     ProjectType
+  status          Status
+  frontendRepoUrl String?
+  backendRepoUrl  String?
+  deploymentUrl   String?
+  dbAttached      Boolean   @default(false)
+  dbType          String?
+  owner           String?
+  priority        Int       @default(3)
+  tags            String   // JSON array stored as string
+  lastUpdatedAt   DateTime  @updatedAt
+  createdAt       DateTime  @default(now())
+  details         ProjectDetail?
+
+  @@map("projects")
+}
+
+model ProjectDetail {
+  id            String    @id @default(cuid())
+  projectId     String    @unique
+  notes         String?
+  openBugs      String   // JSON array stored as string
+  nextMilestones String  // JSON array stored as string
+  clientOwesMe  String?
+  iOweClient    String?
+  buildHistory  String   // JSON array stored as string
+  project       Project   @relation(fields: [projectId], references: [id], onDelete: Cascade)
+
+  @@map("project_details")
+}
+
+enum ProjectType {
+  fullstack
+  frontend
+  backend
+  script
+  utility
+  experiment
+}
+
+enum Status {
+  green
+  yellow
+  red
+}
+
