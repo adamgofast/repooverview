@@ -2,8 +2,6 @@
 
 import { useEffect, useState } from 'react'
 import { useRouter } from 'next/navigation'
-import { onAuthStateChanged, signOut } from 'firebase/auth'
-import { auth } from '@/lib/firebase'
 import { ProjectList } from './components/ProjectList'
 import { Button } from '@/components/ui/button'
 import { useFiltersStore } from '@/stores/filters'
@@ -16,34 +14,54 @@ export default function DashboardClient() {
   const { searchQuery, setSearchQuery } = useFiltersStore()
 
   useEffect(() => {
-    const unsubscribe = onAuthStateChanged(auth, async (user) => {
-      if (user) {
-        setUser(user)
-        // Ensure owner exists
-        try {
-          await fetch('/api/auth/upsert-owner', {
-            method: 'POST',
-            headers: { 'Content-Type': 'application/json' },
-            body: JSON.stringify({
-              firebaseId: user.uid,
-              email: user.email,
-            }),
-          })
-        } catch (error) {
-          console.error('Failed to upsert owner:', error)
-        }
-        setLoading(false)
-      } else {
+    let unsubscribe: (() => void) | undefined
+    const initAuth = async () => {
+      try {
+        const { onAuthStateChanged } = await import('firebase/auth')
+        const { getAuth } = await import('@/lib/firebase')
+        const auth = await getAuth()
+        unsubscribe = onAuthStateChanged(auth, async (user) => {
+          if (user) {
+            setUser(user)
+            // Ensure owner exists
+            try {
+              await fetch('/api/auth/upsert-owner', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({
+                  firebaseId: user.uid,
+                  email: user.email,
+                }),
+              })
+            } catch (error) {
+              console.error('Failed to upsert owner:', error)
+            }
+            setLoading(false)
+          } else {
+            router.push('/auth')
+          }
+        })
+      } catch (error) {
+        console.error('Auth init error:', error)
         router.push('/auth')
       }
-    })
-
-    return () => unsubscribe()
+    }
+    initAuth()
+    return () => {
+      if (unsubscribe) unsubscribe()
+    }
   }, [router])
 
   const handleSignOut = async () => {
-    await signOut(auth)
-    router.push('/auth')
+    try {
+      const { signOut } = await import('firebase/auth')
+      const { getAuth } = await import('@/lib/firebase')
+      const auth = await getAuth()
+      await signOut(auth)
+      router.push('/auth')
+    } catch (error) {
+      console.error('Sign out error:', error)
+    }
   }
 
   if (loading) {

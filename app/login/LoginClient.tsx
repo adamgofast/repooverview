@@ -2,8 +2,6 @@
 
 import { useState, useEffect } from 'react'
 import { useRouter } from 'next/navigation'
-import { signInWithEmailAndPassword, onAuthStateChanged } from 'firebase/auth'
-import { auth } from '@/lib/firebase'
 import { Button } from '@/components/ui/button'
 import { Input } from '@/components/ui/input'
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card'
@@ -16,12 +14,25 @@ export default function LoginClient() {
   const router = useRouter()
 
   useEffect(() => {
-    const unsubscribe = onAuthStateChanged(auth, (user) => {
-      if (user) {
-        router.push('/dashboard')
+    let unsubscribe: (() => void) | undefined
+    const initAuth = async () => {
+      try {
+        const { onAuthStateChanged } = await import('firebase/auth')
+        const { getAuth } = await import('@/lib/firebase')
+        const auth = await getAuth()
+        unsubscribe = onAuthStateChanged(auth, (user) => {
+          if (user) {
+            router.push('/dashboard')
+          }
+        })
+      } catch (error) {
+        console.error('Auth init error:', error)
       }
-    })
-    return () => unsubscribe()
+    }
+    initAuth()
+    return () => {
+      if (unsubscribe) unsubscribe()
+    }
   }, [router])
 
   const handleSubmit = async (e: React.FormEvent) => {
@@ -30,6 +41,9 @@ export default function LoginClient() {
     setError('')
 
     try {
+      const { signInWithEmailAndPassword } = await import('firebase/auth')
+      const { getAuth } = await import('@/lib/firebase')
+      const auth = await getAuth()
       const userCredential = await signInWithEmailAndPassword(auth, email, password)
       // Auto-upsert owner with Trunorth
       await fetch('/api/auth/upsert-owner', {

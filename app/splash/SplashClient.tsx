@@ -2,8 +2,6 @@
 
 import { useEffect } from 'react'
 import { useRouter } from 'next/navigation'
-import { onAuthStateChanged } from 'firebase/auth'
-import { auth } from '@/lib/firebase'
 import Image from 'next/image'
 
 export default function SplashClient() {
@@ -12,14 +10,23 @@ export default function SplashClient() {
   useEffect(() => {
     let unsubscribe: (() => void) | undefined
     // Show splash for 2 seconds, then check auth
-    const timer = setTimeout(() => {
-      unsubscribe = onAuthStateChanged(auth, (user) => {
-        if (user) {
-          router.replace('/dashboard')
-        } else {
-          router.replace('/auth')
-        }
-      })
+    const timer = setTimeout(async () => {
+      try {
+        // Dynamically import Firebase to avoid build-time execution
+        const { onAuthStateChanged } = await import('firebase/auth')
+        const { getAuth } = await import('@/lib/firebase')
+        const auth = await getAuth()
+        unsubscribe = onAuthStateChanged(auth, (user) => {
+          if (user) {
+            router.replace('/dashboard')
+          } else {
+            router.replace('/auth')
+          }
+        })
+      } catch (error) {
+        console.error('Auth check error:', error)
+        router.replace('/auth')
+      }
     }, 2000)
 
     return () => {
