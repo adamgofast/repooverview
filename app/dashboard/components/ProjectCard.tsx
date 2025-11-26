@@ -8,7 +8,7 @@ import { Project } from '@prisma/client'
 import { formatDistanceToNow } from 'date-fns'
 
 interface ProjectCardProps {
-  project: Project & { tags?: string[] }
+  project: Project
 }
 
 export function ProjectCard({ project }: ProjectCardProps) {
