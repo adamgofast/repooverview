@@ -88,7 +88,7 @@ export function NextActions({ projectId, type, initialItems, onUpdate }: NextAct
           {items.length === 0 ? (
             <p className="text-gray-500 text-sm">No items yet.</p>
           ) : (
-            items.map((item, idx) => (
+            items.map((item: string, idx: number) => (
               <div key={idx} className="flex items-center justify-between p-3 bg-gray-50 rounded border">
                 <span className="text-sm">{item}</span>
                 <Button

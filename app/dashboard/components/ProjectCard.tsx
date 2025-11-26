@@ -14,7 +14,7 @@ interface ProjectCardProps {
 export function ProjectCard({ project }: ProjectCardProps) {
   const router = useRouter()
   
-  const tags = typeof project.tags === 'string' 
+  const tags: string[] = typeof project.tags === 'string' 
     ? (project.tags ? JSON.parse(project.tags) : [])
     : (project.tags || [])
 
@@ -51,7 +51,7 @@ export function ProjectCard({ project }: ProjectCardProps) {
         </div>
         {tags.length > 0 && (
           <div className="flex flex-wrap gap-1 mb-3">
-            {tags.slice(0, 3).map((tag, idx) => (
+            {tags.slice(0, 3).map((tag: string, idx: number) => (
               <Badge key={idx} variant="secondary" className="text-xs">
                 {tag}
               </Badge>

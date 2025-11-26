@@ -61,7 +61,7 @@ export function BuildHistory({ projectId, initialHistory, onUpdate }: BuildHisto
           {history.length === 0 ? (
             <p className="text-gray-500 text-sm">No build history yet.</p>
           ) : (
-            history.map((entry, idx) => (
+            history.map((entry: string, idx: number) => (
               <div key={idx} className="p-3 bg-gray-50 rounded border text-sm">
                 {entry}
               </div>
