@@ -20,13 +20,13 @@ export async function POST(request: NextRequest) {
       )
     }
 
-    // Get or create TrueNorth master container
+    // Get or create Trunorth master container
     let trueNorth = await prisma.trueNorth.findFirst()
     if (!trueNorth) {
       trueNorth = await prisma.trueNorth.create({
         data: {
-          name: 'TrueNorth',
-          description: 'Master container for TrueNorth Stack Overview',
+          name: 'Trunorth',
+          description: 'Master container for Trunorth Stack Overview',
         },
       })
     }

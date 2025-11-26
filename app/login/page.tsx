@@ -31,7 +31,7 @@ export default function AuthPage() {
 
     try {
       const userCredential = await signInWithEmailAndPassword(auth, email, password)
-      // Auto-upsert owner with TrueNorth
+      // Auto-upsert owner with Trunorth
       await fetch('/api/auth/upsert-owner', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
@@ -52,7 +52,7 @@ export default function AuthPage() {
     <div className="min-h-screen flex items-center justify-center bg-gray-50 p-4">
       <Card className="w-full max-w-md">
         <CardHeader>
-          <CardTitle className="text-2xl">TrueNorth Stack Overview</CardTitle>
+          <CardTitle className="text-2xl">Trunorth Stack Overview</CardTitle>
           <CardDescription>Sign in to access your projects</CardDescription>
         </CardHeader>
         <CardContent>

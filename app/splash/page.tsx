@@ -23,7 +23,7 @@ export default function SplashPage() {
   return (
     <div className="min-h-screen flex items-center justify-center bg-gray-50">
       <div className="text-center">
-        <h1 className="text-4xl font-bold text-gray-900 mb-4">TrueNorth Stack Overview</h1>
+        <h1 className="text-4xl font-bold text-gray-900 mb-4">Trunorth Stack Overview</h1>
         <p className="text-gray-600">Loading...</p>
       </div>
     </div>
