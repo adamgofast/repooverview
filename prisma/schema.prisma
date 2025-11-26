@@ -10,6 +10,34 @@ datasource db {
   url      = env("DATABASE_URL")
 }
 
+// Master Container - TrueNorth
+model TrueNorth {
+  id          String   @id @default(cuid())
+  name        String   @default("TrueNorth")
+  description String?
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+  owners      Owner[]
+
+  @@map("truenorth")
+}
+
+// Universal Personhood - Owner
+model Owner {
+  id           String   @id @default(cuid())
+  firebaseId   String   @unique
+  email        String   @unique
+  firstName    String?
+  lastName     String?
+  trueNorthId  String
+  createdAt    DateTime @default(now())
+  updatedAt    DateTime @updatedAt
+  trueNorth    TrueNorth @relation(fields: [trueNorthId], references: [id])
+  projects     Project[]
+
+  @@map("owners")
+}
+
 model Project {
   id              String   @id @default(cuid())
   name            String
@@ -21,11 +49,12 @@ model Project {
   deploymentUrl   String?
   dbAttached      Boolean   @default(false)
   dbType          String?
-  owner           String?
+  ownerId         String
   priority        Int       @default(3)
   tags            String    @default("[]")
   lastUpdatedAt   DateTime  @updatedAt
   createdAt       DateTime  @default(now())
+  owner           Owner     @relation(fields: [ownerId], references: [id])
   details         ProjectDetail?
 
   @@map("projects")
