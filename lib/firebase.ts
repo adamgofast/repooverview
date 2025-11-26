@@ -28,7 +28,7 @@ function getFirebaseApp() {
   return app
 }
 
-export function getAuthInstance(): Auth {
+function getAuthInstance(): Auth {
   if (typeof window === 'undefined') {
     throw new Error('Firebase Auth can only be used in browser context')
   }
@@ -38,10 +38,6 @@ export function getAuthInstance(): Auth {
   return authInstance
 }
 
-// Export auth as a getter to prevent build-time execution
-export const auth = new Proxy({} as Auth, {
-  get(_target, prop) {
-    return getAuthInstance()[prop as keyof Auth]
-  }
-})
+// Export auth as a lazy getter - prevents build-time execution
+export const auth = getAuthInstance()
 
