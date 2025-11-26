@@ -11,7 +11,7 @@ export async function POST(request: NextRequest) {
     }
 
     const body = await request.json()
-    const { firebaseId, email } = body
+    const { firebaseId, email, firstName, lastName } = body
 
     if (!firebaseId || !email) {
       return NextResponse.json(
@@ -36,11 +36,15 @@ export async function POST(request: NextRequest) {
       where: { firebaseId },
       update: {
         email,
+        firstName: firstName || undefined,
+        lastName: lastName || undefined,
         updatedAt: new Date(),
       },
       create: {
         firebaseId,
         email,
+        firstName: firstName || undefined,
+        lastName: lastName || undefined,
         trueNorthId: trueNorth.id,
       },
     })
