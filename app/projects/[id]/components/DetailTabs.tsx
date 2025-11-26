@@ -20,22 +20,21 @@ export function DetailTabs({ projectId }: DetailTabsProps) {
   const [loading, setLoading] = useState(true)
 
   useEffect(() => {
+    const fetchProject = async () => {
+      try {
+        const res = await fetch(`/api/projects/${projectId}`)
+        if (res.ok) {
+          const data = await res.json()
+          setProject(data)
+        }
+      } catch (error) {
+        console.error('Failed to fetch project:', error)
+      } finally {
+        setLoading(false)
+      }
+    }
     fetchProject()
   }, [projectId])
-
-  const fetchProject = async () => {
-    try {
-      const res = await fetch(`/api/projects/${projectId}`)
-      if (res.ok) {
-        const data = await res.json()
-        setProject(data)
-      }
-    } catch (error) {
-      console.error('Failed to fetch project:', error)
-    } finally {
-      setLoading(false)
-    }
-  }
 
   if (loading) {
     return <div>Loading project...</div>
