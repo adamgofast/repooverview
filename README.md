@@ -1,4 +1,4 @@
-# PinRepo Dashboard
+# TrueNorth Stack Overview
 
 A Next.js application for tracking personal repos/projects and their status.
 
