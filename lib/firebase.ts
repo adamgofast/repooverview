@@ -38,16 +38,13 @@ function getAuthInstance(): Auth {
   return authInstance
 }
 
-// Export auth as a getter property - prevents build-time execution
-// Only initializes when accessed in browser context
-Object.defineProperty(exports, 'auth', {
-  get() {
-    return getAuthInstance()
-  },
-  enumerable: true,
-  configurable: true,
-})
-
-// Also export as named export for TypeScript
-export { getAuthInstance as auth }
+// Export auth - initialization only happens when accessed in browser
+// With dynamic flags on pages, this won't execute during build
+export const auth = (() => {
+  if (typeof window === 'undefined') {
+    // Return a dummy object during build/SSR
+    return {} as Auth
+  }
+  return getAuthInstance()
+})()
 
