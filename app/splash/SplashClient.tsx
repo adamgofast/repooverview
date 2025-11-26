@@ -4,27 +4,54 @@ import { useEffect } from 'react'
 import { useRouter } from 'next/navigation'
 import { onAuthStateChanged } from 'firebase/auth'
 import { auth } from '@/lib/firebase'
+import Image from 'next/image'
 
 export default function SplashClient() {
   const router = useRouter()
 
   useEffect(() => {
-    const unsubscribe = onAuthStateChanged(auth, (user) => {
-      if (user) {
-        router.push('/dashboard')
-      } else {
-        router.push('/auth')
-      }
-    })
+    let unsubscribe
+    // Show splash for 2 seconds, then check auth
+    const timer = setTimeout(() => {
+      unsubscribe = onAuthStateChanged(auth, (user) => {
+        if (user) {
+          router.replace('/dashboard')
+        } else {
+          router.replace('/auth')
+        }
+      })
+    }, 2000)
 
-    return () => unsubscribe()
+    return () => {
+      clearTimeout(timer)
+      if (unsubscribe) {
+        unsubscribe()
+      }
+    }
   }, [router])
 
   return (
-    <div className="min-h-screen flex items-center justify-center bg-gray-50">
+    <div className="min-h-screen bg-gradient-to-br from-gray-900 via-gray-800 to-gray-900 flex items-center justify-center">
       <div className="text-center">
-        <h1 className="text-4xl font-bold text-gray-900 mb-4">Trunorth Stack Overview</h1>
-        <p className="text-gray-600">Loading...</p>
+        <div className="mx-auto mb-8 flex justify-center">
+          <Image
+            src="/TruNorth.png"
+            alt="Trunorth"
+            width={128}
+            height={128}
+            className="h-32 w-32 object-contain"
+            priority
+          />
+        </div>
+        <h1 className="text-4xl font-bold text-white mb-2">
+          Trunorth Stack Overview
+        </h1>
+        <p className="text-xl text-white/80 mb-4">
+          Project Mission Control
+        </p>
+        <p className="text-lg text-white/60">
+          Loading...
+        </p>
       </div>
     </div>
   )
