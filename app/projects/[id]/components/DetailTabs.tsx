@@ -6,10 +6,11 @@ import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs'
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card'
 import { Badge } from '@/components/ui/badge'
 import { ProjectStatusBadge } from '@/app/dashboard/components/ProjectStatusBadge'
-import { NotesEditor } from './NotesEditor'
-import { BuildHistory } from './BuildHistory'
-import { ClientOwes } from './ClientOwes'
-import { NextActions } from './NextActions'
+// TODO: implement later
+// import { NotesEditor } from './NotesEditor'
+// import { BuildHistory } from './BuildHistory'
+// import { ClientOwes } from './ClientOwes'
+// import { NextActions } from './NextActions'
 
 interface DetailTabsProps {
   projectId: string
@@ -140,42 +141,28 @@ export function DetailTabs({ projectId }: DetailTabsProps) {
         </TabsContent>
 
         <TabsContent value="notes" className="mt-6">
-          <NotesEditor projectId={projectId} initialNotes={project.details?.notes || ''} onUpdate={fetchProject} />
+          {/* TODO: implement later */}
+          <div>Hello World</div>
         </TabsContent>
 
         <TabsContent value="bugs" className="mt-6">
-          <NextActions 
-            projectId={projectId}
-            type="bugs"
-            initialItems={project.details?.openBugs ? JSON.parse(project.details.openBugs) : []}
-            onUpdate={fetchProject}
-          />
+          {/* TODO: implement later */}
+          <div>Hello World</div>
         </TabsContent>
 
         <TabsContent value="milestones" className="mt-6">
-          <NextActions 
-            projectId={projectId}
-            type="milestones"
-            initialItems={project.details?.nextMilestones ? JSON.parse(project.details.nextMilestones) : []}
-            onUpdate={fetchProject}
-          />
+          {/* TODO: implement later */}
+          <div>Hello World</div>
         </TabsContent>
 
         <TabsContent value="client" className="mt-6">
-          <ClientOwes 
-            projectId={projectId}
-            initialClientOwes={project.details?.clientOwesMe || ''}
-            initialIOwe={project.details?.iOweClient || ''}
-            onUpdate={fetchProject}
-          />
+          {/* TODO: implement later */}
+          <div>Hello World</div>
         </TabsContent>
 
         <TabsContent value="builds" className="mt-6">
-          <BuildHistory 
-            projectId={projectId}
-            initialHistory={project.details?.buildHistory ? JSON.parse(project.details.buildHistory) : []}
-            onUpdate={fetchProject}
-          />
+          {/* TODO: implement later */}
+          <div>Hello World</div>
         </TabsContent>
       </Tabs>
     </div>
