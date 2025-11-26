@@ -10,7 +10,7 @@ export default function SplashClient() {
   const router = useRouter()
 
   useEffect(() => {
-    let unsubscribe
+    let unsubscribe: (() => void) | undefined
     // Show splash for 2 seconds, then check auth
     const timer = setTimeout(() => {
       unsubscribe = onAuthStateChanged(auth, (user) => {
