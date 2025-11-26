@@ -38,6 +38,16 @@ function getAuthInstance(): Auth {
   return authInstance
 }
 
-// Export auth as a lazy getter - prevents build-time execution
-export const auth = getAuthInstance()
+// Export auth as a getter property - prevents build-time execution
+// Only initializes when accessed in browser context
+Object.defineProperty(exports, 'auth', {
+  get() {
+    return getAuthInstance()
+  },
+  enumerable: true,
+  configurable: true,
+})
+
+// Also export as named export for TypeScript
+export { getAuthInstance as auth }
 
