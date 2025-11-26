@@ -9,7 +9,7 @@ export default function SplashClient() {
 
   useEffect(() => {
     let unsubscribe: (() => void) | undefined
-    // Show splash for 2 seconds, then check auth
+    // Show splash for 1 second, then check auth
     const timer = setTimeout(async () => {
       try {
         // Dynamically import Firebase to avoid build-time execution
@@ -20,14 +20,14 @@ export default function SplashClient() {
           if (user) {
             router.replace('/dashboard')
           } else {
-            router.replace('/auth')
+            router.replace('/signup')
           }
         })
       } catch (error) {
         console.error('Auth check error:', error)
-        router.replace('/auth')
+        router.replace('/signup')
       }
-    }, 2000)
+    }, 1000)
 
     return () => {
       clearTimeout(timer)

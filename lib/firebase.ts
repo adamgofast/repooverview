@@ -15,6 +15,7 @@ export const firebaseConfig = {
 // Lazy initialization function - call this in components, not at module level
 let app: any
 let authInstance: any
+let googleProvider: any
 
 export async function getAuth() {
   if (typeof window === 'undefined') {
@@ -30,6 +31,32 @@ export async function getAuth() {
     authInstance = getAuthFn(app)
   }
   return authInstance
+}
+
+export async function getGoogleProvider() {
+  if (typeof window === 'undefined') {
+    throw new Error('Firebase can only be initialized in browser context')
+  }
+  if (!googleProvider) {
+    const { GoogleAuthProvider } = await import('firebase/auth')
+    googleProvider = new GoogleAuthProvider()
+  }
+  return googleProvider
+}
+
+export async function signInWithGoogle() {
+  const { signInWithPopup } = await import('firebase/auth')
+  const auth = await getAuth()
+  const provider = await getGoogleProvider()
+  const result = await signInWithPopup(auth, provider)
+  const user = result.user
+
+  return {
+    uid: user.uid,
+    email: user.email,
+    name: user.displayName,
+    photoURL: user.photoURL,
+  }
 }
 
 // Export a dummy object that will be replaced at runtime
