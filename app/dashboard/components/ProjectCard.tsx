@@ -4,8 +4,11 @@ import { useRouter } from 'next/navigation'
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card'
 import { ProjectStatusBadge } from './ProjectStatusBadge'
 import { Badge } from '@/components/ui/badge'
-import { Project } from '@prisma/client'
+// TODO: implement later - disabled for SSG
+// import { Project } from '@prisma/client'
 import { formatDistanceToNow } from 'date-fns'
+
+type Project = any
 
 interface ProjectCardProps {
   project: Project

@@ -1,9 +1,12 @@
 'use client'
 
 import { useEffect, useState } from 'react'
-import { Project } from '@prisma/client'
+// TODO: implement later - disabled for SSG
+// import { Project } from '@prisma/client'
 import { ProjectCard } from './ProjectCard'
 import { useFiltersStore } from '@/stores/filters'
+
+type Project = any
 
 export function ProjectList() {
   const [projects, setProjects] = useState<Project[]>([])

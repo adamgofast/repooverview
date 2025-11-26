@@ -1,7 +1,8 @@
 'use client'
 
 import { useEffect, useState } from 'react'
-import { Project, ProjectDetail } from '@prisma/client'
+// TODO: implement later - disabled for SSG
+// import { Project, ProjectDetail } from '@prisma/client'
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs'
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card'
 import { Badge } from '@/components/ui/badge'
@@ -11,6 +12,9 @@ import { ProjectStatusBadge } from '@/app/dashboard/components/ProjectStatusBadg
 // import { BuildHistory } from './BuildHistory'
 // import { ClientOwes } from './ClientOwes'
 // import { NextActions } from './NextActions'
+
+type Project = any
+type ProjectDetail = any
 
 interface DetailTabsProps {
   projectId: string
