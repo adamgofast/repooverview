@@ -14,8 +14,8 @@ model Project {
   id              String   @id @default(cuid())
   name            String
   summary         String?
-  projectType     ProjectType
-  status          Status
+  projectType     String   // fullstack | frontend | backend | script | utility | experiment
+  status          String   // green | yellow | red
   frontendRepoUrl String?
   backendRepoUrl  String?
   deploymentUrl   String?
@@ -23,7 +23,7 @@ model Project {
   dbType          String?
   owner           String?
   priority        Int       @default(3)
-  tags            String   // JSON array stored as string
+  tags            String    @default("[]")
   lastUpdatedAt   DateTime  @updatedAt
   createdAt       DateTime  @default(now())
   details         ProjectDetail?
@@ -35,28 +35,13 @@ model ProjectDetail {
   id            String    @id @default(cuid())
   projectId     String    @unique
   notes         String?
-  openBugs      String   // JSON array stored as string
-  nextMilestones String  // JSON array stored as string
+  openBugs      String    @default("[]")
+  nextMilestones String   @default("[]")
   clientOwesMe  String?
   iOweClient    String?
-  buildHistory  String   // JSON array stored as string
+  buildHistory  String    @default("[]")
   project       Project   @relation(fields: [projectId], references: [id], onDelete: Cascade)
 
   @@map("project_details")
-}
-
-enum ProjectType {
-  fullstack
-  frontend
-  backend
-  script
-  utility
-  experiment
-}
-
-enum Status {
-  green
-  yellow
-  red
 }
 

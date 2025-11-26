@@ -1,8 +1,7 @@
 import { Badge } from "@/components/ui/badge"
-import { Status } from "@prisma/client"
 
 interface ProjectStatusBadgeProps {
-  status: Status
+  status: 'green' | 'yellow' | 'red'
 }
 
 export function ProjectStatusBadge({ status }: ProjectStatusBadgeProps) {

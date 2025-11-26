@@ -4,7 +4,7 @@ import { useRouter } from 'next/navigation'
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card'
 import { ProjectStatusBadge } from './ProjectStatusBadge'
 import { Badge } from '@/components/ui/badge'
-import { Project, ProjectType } from '@prisma/client'
+import { Project } from '@prisma/client'
 import { formatDistanceToNow } from 'date-fns'
 
 interface ProjectCardProps {
