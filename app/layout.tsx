@@ -8,9 +8,9 @@ export const metadata: Metadata = {
   title: "Trunorth Stack Overview",
   description: "Project Mission Control",
   icons: {
-    icon: '/icon.png',
-    shortcut: '/icon.png',
-    apple: '/icon.png',
+    icon: '/TruNorth.png',
+    shortcut: '/TruNorth.png',
+    apple: '/TruNorth.png',
   },
 };
 
