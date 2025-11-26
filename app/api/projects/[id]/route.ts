@@ -6,6 +6,12 @@ export async function GET(
   { params }: { params: { id: string } }
 ) {
   try {
+    if (!prisma) {
+      return NextResponse.json(
+        { error: 'Database not configured' },
+        { status: 503 }
+      )
+    }
     const project = await prisma.project.findUnique({
       where: { id: params.id },
       include: {
@@ -35,6 +41,12 @@ export async function PATCH(
   { params }: { params: { id: string } }
 ) {
   try {
+    if (!prisma) {
+      return NextResponse.json(
+        { error: 'Database not configured' },
+        { status: 503 }
+      )
+    }
     const body = await request.json()
     const {
       name,
@@ -88,6 +100,12 @@ export async function DELETE(
   { params }: { params: { id: string } }
 ) {
   try {
+    if (!prisma) {
+      return NextResponse.json(
+        { error: 'Database not configured' },
+        { status: 503 }
+      )
+    }
     await prisma.project.delete({
       where: { id: params.id },
     })

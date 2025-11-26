@@ -3,6 +3,12 @@ import { prisma } from '@/lib/prisma'
 
 export async function GET() {
   try {
+    if (!prisma) {
+      return NextResponse.json(
+        { error: 'Database not configured' },
+        { status: 503 }
+      )
+    }
     const projects = await prisma.project.findMany({
       include: {
         details: true,
@@ -23,6 +29,12 @@ export async function GET() {
 
 export async function POST(request: NextRequest) {
   try {
+    if (!prisma) {
+      return NextResponse.json(
+        { error: 'Database not configured' },
+        { status: 503 }
+      )
+    }
     const body = await request.json()
     const {
       name,
