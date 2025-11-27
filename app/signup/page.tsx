@@ -7,7 +7,7 @@ export const revalidate = 0
 import { useState } from 'react'
 import { useRouter } from 'next/navigation'
 import Image from 'next/image'
-import { signInWithGoogle } from '@/lib/firebase'
+import { signInWithGoogle } from '@/lib/client.firebase'
 
 export default function SignupPage() {
   const router = useRouter()

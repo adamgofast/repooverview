@@ -22,7 +22,7 @@ export default function LoginPage() {
     const initAuth = async () => {
       try {
         const { onAuthStateChanged } = await import('firebase/auth')
-        const { getAuth } = await import('@/lib/firebase')
+        const { getAuth } = await import('@/lib/client.firebase')
         const auth = await getAuth()
         unsubscribe = onAuthStateChanged(auth, (user) => {
           if (user) {
@@ -46,7 +46,7 @@ export default function LoginPage() {
 
     try {
       const { signInWithEmailAndPassword } = await import('firebase/auth')
-      const { getAuth } = await import('@/lib/firebase')
+      const { getAuth } = await import('@/lib/client.firebase')
       const auth = await getAuth()
       const userCredential = await signInWithEmailAndPassword(auth, email, password)
       // Auto-upsert owner with Trunorth

@@ -22,7 +22,7 @@ export default function DashboardPage() {
     const initAuth = async () => {
       try {
         const { onAuthStateChanged } = await import('firebase/auth')
-        const { getAuth } = await import('@/lib/firebase')
+        const { getAuth } = await import('@/lib/client.firebase')
         const auth = await getAuth()
         unsubscribe = onAuthStateChanged(auth, async (user) => {
           if (user) {
@@ -59,7 +59,7 @@ export default function DashboardPage() {
   const handleSignOut = async () => {
     try {
       const { signOut } = await import('firebase/auth')
-      const { getAuth } = await import('@/lib/firebase')
+      const { getAuth } = await import('@/lib/client.firebase')
       const auth = await getAuth()
       await signOut(auth)
       router.push('/auth')
