@@ -1,83 +1,76 @@
-// Firebase Client SDK - CLIENT-ONLY
-// This file should ONLY be imported by 'use client' components
-// DO NOT import Firebase modules at top level - they will execute during build
+/**
+ * Firebase Client SDK - CLIENT-ONLY
+ * 
+ * ⚠️ Only import this in client components (files with 'use client')
+ * Never use in server routes or API handlers
+ */
 
-// Lazy getter for Firebase config to avoid evaluation during build
-function getFirebaseConfig() {
-  if (typeof window === 'undefined') {
-    // Return a placeholder during SSR/build - will be replaced at runtime
-    return {
-      apiKey: '',
-      authDomain: '',
-      projectId: '',
-      storageBucket: '',
-      messagingSenderId: '',
-      appId: '',
-      measurementId: '',
-    }
-  }
-  return {
-    apiKey: process.env.NEXT_PUBLIC_FIREBASE_API_KEY || '',
-    authDomain: process.env.NEXT_PUBLIC_FIREBASE_AUTH_DOMAIN || '',
-    projectId: process.env.NEXT_PUBLIC_FIREBASE_PROJECT_ID || '',
-    storageBucket: process.env.NEXT_PUBLIC_FIREBASE_STORAGE_BUCKET || '',
-    messagingSenderId: process.env.NEXT_PUBLIC_FIREBASE_MESSAGING_SENDER_ID || '',
-    appId: process.env.NEXT_PUBLIC_FIREBASE_APP_ID || '',
-    measurementId: process.env.NEXT_PUBLIC_FIREBASE_MEASUREMENT_ID || '',
-  }
+// Firebase config - accessed at module level
+const firebaseConfig = {
+  apiKey: process.env.NEXT_PUBLIC_FIREBASE_API_KEY || '',
+  authDomain: process.env.NEXT_PUBLIC_FIREBASE_AUTH_DOMAIN || '',
+  projectId: process.env.NEXT_PUBLIC_FIREBASE_PROJECT_ID || '',
+  storageBucket: process.env.NEXT_PUBLIC_FIREBASE_STORAGE_BUCKET || '',
+  messagingSenderId: process.env.NEXT_PUBLIC_FIREBASE_MESSAGING_SENDER_ID || '',
+  appId: process.env.NEXT_PUBLIC_FIREBASE_APP_ID || '',
+  measurementId: process.env.NEXT_PUBLIC_FIREBASE_MEASUREMENT_ID || '',
 }
 
-// Lazy initialization function - call this in components, not at module level
-let app: any
-let authInstance: any
-let googleProvider: any
+// Lazy initialization - only when needed and in browser
+let firebaseApp: any = null
+let auth: any = null
+let googleProvider: any = null
 
-export async function getAuth() {
+async function initializeFirebase() {
   if (typeof window === 'undefined') {
     throw new Error('Firebase can only be initialized in browser context')
   }
-  
-  // Get config lazily
-  const firebaseConfig = getFirebaseConfig()
-  
-  // Validate Firebase config
-  if (!firebaseConfig.apiKey || !firebaseConfig.authDomain || !firebaseConfig.projectId) {
+
+  // Validate config
+  if (!firebaseConfig.apiKey || !firebaseConfig.projectId || !firebaseConfig.authDomain) {
     throw new Error('Firebase configuration is incomplete. Please check your environment variables.')
   }
-  
-  if (!authInstance) {
-    try {
-      const { initializeApp, getApps } = await import('firebase/app')
-      const { getAuth: getAuthFn } = await import('firebase/auth')
-      
-      if (!app) {
-        app = getApps().length === 0 ? initializeApp(firebaseConfig) : getApps()[0]
-      }
-      authInstance = getAuthFn(app)
-    } catch (error: any) {
-      console.error('Firebase initialization error:', error)
-      throw new Error(`Failed to initialize Firebase: ${error.message || 'Unknown error'}`)
-    }
-  }
-  return authInstance
-}
 
-export async function getGoogleProvider() {
-  if (typeof window === 'undefined') {
-    throw new Error('Firebase can only be initialized in browser context')
+  // Initialize if not already done
+  if (!firebaseApp || !auth) {
+    const { initializeApp, getApps } = await import('firebase/app')
+    const { getAuth: getAuthFn } = await import('firebase/auth')
+    
+    firebaseApp = getApps().length === 0 ? initializeApp(firebaseConfig) : getApps()[0]
+    auth = getAuthFn(firebaseApp)
   }
+
   if (!googleProvider) {
     const { GoogleAuthProvider } = await import('firebase/auth')
     googleProvider = new GoogleAuthProvider()
+  }
+
+  return { auth, googleProvider }
+}
+
+export async function getAuth() {
+  if (!auth) {
+    await initializeFirebase()
+  }
+  return auth
+}
+
+export async function getGoogleProvider() {
+  if (!googleProvider) {
+    await initializeFirebase()
   }
   return googleProvider
 }
 
 export async function signInWithGoogle() {
+  if (typeof window === 'undefined') {
+    throw new Error('signInWithGoogle can only be called on the client')
+  }
+  
   const { signInWithPopup } = await import('firebase/auth')
-  const auth = await getAuth()
-  const provider = await getGoogleProvider()
-  const result = await signInWithPopup(auth, provider)
+  const { auth: authInstance, googleProvider: provider } = await initializeFirebase()
+  
+  const result = await signInWithPopup(authInstance, provider)
   const user = result.user
 
   return {
