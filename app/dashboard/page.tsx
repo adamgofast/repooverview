@@ -1,9 +1,5 @@
 'use client'
 
-export const dynamic = 'force-dynamic'
-export const fetchCache = 'force-no-store'
-export const revalidate = 0
-
 import { useEffect, useState } from 'react'
 import { useRouter } from 'next/navigation'
 import { ProjectList } from './components/ProjectList'
@@ -18,6 +14,7 @@ export default function DashboardPage() {
   const { searchQuery, setSearchQuery } = useFiltersStore()
 
   useEffect(() => {
+    if (typeof window === 'undefined') return
     let unsubscribe: (() => void) | undefined
     const initAuth = async () => {
       try {

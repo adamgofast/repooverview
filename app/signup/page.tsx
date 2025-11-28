@@ -1,23 +1,24 @@
 'use client'
 
-export const dynamic = 'force-dynamic'
-export const fetchCache = 'force-no-store'
-export const revalidate = 0
-
-import { useState } from 'react'
+import { useState, useEffect } from 'react'
 import { useRouter } from 'next/navigation'
 import Image from 'next/image'
-import { signInWithGoogle } from '@/lib/client.firebase'
 
 export default function SignupPage() {
   const router = useRouter()
   const [isSigningUp, setIsSigningUp] = useState(false)
+  const [mounted, setMounted] = useState(false)
+
+  useEffect(() => {
+    setMounted(true)
+  }, [])
 
   const handleGoogleSignUp = async () => {
     if (isSigningUp) return
 
     setIsSigningUp(true)
     try {
+      const { signInWithGoogle } = await import('@/lib/client.firebase')
       const result = await signInWithGoogle()
       const firstName = result.name?.split(' ')[0] || ''
       const lastName = result.name?.split(' ').slice(1).join(' ') || ''
@@ -45,6 +46,16 @@ export default function SignupPage() {
     } finally {
       setIsSigningUp(false)
     }
+  }
+
+  if (!mounted) {
+    return (
+      <div className="min-h-screen bg-gradient-to-br from-gray-900 via-gray-800 to-gray-900 flex items-center justify-center p-4">
+        <div className="text-center">
+          <p className="text-white">Loading...</p>
+        </div>
+      </div>
+    )
   }
 
   return (

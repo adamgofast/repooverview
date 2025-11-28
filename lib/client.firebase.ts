@@ -2,14 +2,29 @@
 // This file should ONLY be imported by 'use client' components
 // DO NOT import Firebase modules at top level - they will execute during build
 
-export const firebaseConfig = {
-  apiKey: process.env.NEXT_PUBLIC_FIREBASE_API_KEY,
-  authDomain: process.env.NEXT_PUBLIC_FIREBASE_AUTH_DOMAIN,
-  projectId: process.env.NEXT_PUBLIC_FIREBASE_PROJECT_ID,
-  storageBucket: process.env.NEXT_PUBLIC_FIREBASE_STORAGE_BUCKET,
-  messagingSenderId: process.env.NEXT_PUBLIC_FIREBASE_MESSAGING_SENDER_ID,
-  appId: process.env.NEXT_PUBLIC_FIREBASE_APP_ID,
-  measurementId: process.env.NEXT_PUBLIC_FIREBASE_MEASUREMENT_ID,
+// Lazy getter for Firebase config to avoid evaluation during build
+function getFirebaseConfig() {
+  if (typeof window === 'undefined') {
+    // Return a placeholder during SSR/build - will be replaced at runtime
+    return {
+      apiKey: '',
+      authDomain: '',
+      projectId: '',
+      storageBucket: '',
+      messagingSenderId: '',
+      appId: '',
+      measurementId: '',
+    }
+  }
+  return {
+    apiKey: process.env.NEXT_PUBLIC_FIREBASE_API_KEY || '',
+    authDomain: process.env.NEXT_PUBLIC_FIREBASE_AUTH_DOMAIN || '',
+    projectId: process.env.NEXT_PUBLIC_FIREBASE_PROJECT_ID || '',
+    storageBucket: process.env.NEXT_PUBLIC_FIREBASE_STORAGE_BUCKET || '',
+    messagingSenderId: process.env.NEXT_PUBLIC_FIREBASE_MESSAGING_SENDER_ID || '',
+    appId: process.env.NEXT_PUBLIC_FIREBASE_APP_ID || '',
+    measurementId: process.env.NEXT_PUBLIC_FIREBASE_MEASUREMENT_ID || '',
+  }
 }
 
 // Lazy initialization function - call this in components, not at module level
@@ -21,14 +36,28 @@ export async function getAuth() {
   if (typeof window === 'undefined') {
     throw new Error('Firebase can only be initialized in browser context')
   }
+  
+  // Get config lazily
+  const firebaseConfig = getFirebaseConfig()
+  
+  // Validate Firebase config
+  if (!firebaseConfig.apiKey || !firebaseConfig.authDomain || !firebaseConfig.projectId) {
+    throw new Error('Firebase configuration is incomplete. Please check your environment variables.')
+  }
+  
   if (!authInstance) {
-    const { initializeApp, getApps } = await import('firebase/app')
-    const { getAuth: getAuthFn } = await import('firebase/auth')
-    
-    if (!app) {
-      app = getApps().length === 0 ? initializeApp(firebaseConfig) : getApps()[0]
+    try {
+      const { initializeApp, getApps } = await import('firebase/app')
+      const { getAuth: getAuthFn } = await import('firebase/auth')
+      
+      if (!app) {
+        app = getApps().length === 0 ? initializeApp(firebaseConfig) : getApps()[0]
+      }
+      authInstance = getAuthFn(app)
+    } catch (error: any) {
+      console.error('Firebase initialization error:', error)
+      throw new Error(`Failed to initialize Firebase: ${error.message || 'Unknown error'}`)
     }
-    authInstance = getAuthFn(app)
   }
   return authInstance
 }

@@ -1,17 +1,19 @@
 'use client'
 
-export const dynamic = 'force-dynamic'
-export const fetchCache = 'force-no-store'
-export const revalidate = 0
-
-import { useEffect } from 'react'
+import { useEffect, useState } from 'react'
 import { useRouter } from 'next/navigation'
 import Image from 'next/image'
 
 export default function HomePage() {
   const router = useRouter()
+  const [mounted, setMounted] = useState(false)
 
   useEffect(() => {
+    setMounted(true)
+  }, [])
+
+  useEffect(() => {
+    if (!mounted) return
     let unsubscribe: (() => void) | undefined
     // Show splash for 1 second, then check auth
     const timer = setTimeout(async () => {
@@ -39,7 +41,7 @@ export default function HomePage() {
         unsubscribe()
       }
     }
-  }, [router])
+  }, [router, mounted])
 
   return (
     <div className="min-h-screen bg-gradient-to-br from-gray-900 via-gray-800 to-gray-900 flex items-center justify-center">
