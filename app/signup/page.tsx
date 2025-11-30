@@ -18,18 +18,20 @@ export default function SignupPage() {
 
     setIsSigningUp(true)
     try {
-      const { signInWithGoogle } = await import('@/lib/client.firebase')
-      const result = await signInWithGoogle()
-      const firstName = result.name?.split(' ')[0] || ''
-      const lastName = result.name?.split(' ').slice(1).join(' ') || ''
+      const { signInWithPopup } = await import('firebase/auth')
+      const { auth, googleProvider } = await import('@/lib/client.firebase')
+      const result = await signInWithPopup(auth, googleProvider)
+      const user = result.user
+      const firstName = user.displayName?.split(' ')[0] || ''
+      const lastName = user.displayName?.split(' ').slice(1).join(' ') || ''
 
       // Auto-upsert owner with Trunorth
       const response = await fetch('/api/auth/upsert-owner', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({
-          firebaseId: result.uid,
-          email: result.email,
+          firebaseId: user.uid,
+          email: user.email,
           firstName,
           lastName,
         }),

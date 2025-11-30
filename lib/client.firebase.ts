@@ -5,79 +5,29 @@
  * Never use in server routes or API handlers
  */
 
-// Firebase config - accessed at module level
+// Import the functions you need from the SDKs you need
+import { initializeApp } from "firebase/app";
+import { getAnalytics } from "firebase/analytics";
+import { getAuth } from "firebase/auth";
+import { GoogleAuthProvider } from "firebase/auth";
+
+// Your web app's Firebase configuration
+// For Firebase JS SDK v7.20.0 and later, measurementId is optional
 const firebaseConfig = {
-  apiKey: process.env.NEXT_PUBLIC_FIREBASE_API_KEY || '',
-  authDomain: process.env.NEXT_PUBLIC_FIREBASE_AUTH_DOMAIN || '',
-  projectId: process.env.NEXT_PUBLIC_FIREBASE_PROJECT_ID || '',
-  storageBucket: process.env.NEXT_PUBLIC_FIREBASE_STORAGE_BUCKET || '',
-  messagingSenderId: process.env.NEXT_PUBLIC_FIREBASE_MESSAGING_SENDER_ID || '',
-  appId: process.env.NEXT_PUBLIC_FIREBASE_APP_ID || '',
-  measurementId: process.env.NEXT_PUBLIC_FIREBASE_MEASUREMENT_ID || '',
-}
+  apiKey: "AIzaSyBSZtWajE1Twela0HS8clykCb7IxHQhmCg",
+  authDomain: "truenorth-29011.firebaseapp.com",
+  projectId: "truenorth-29011",
+  storageBucket: "truenorth-29011.firebasestorage.app",
+  messagingSenderId: "350386907594",
+  appId: "1:350386907594:web:cc62bccfc9d86e23cbc733",
+  measurementId: "G-49Y7F6J5YG"
+};
 
-// Lazy initialization - only when needed and in browser
-let firebaseApp: any = null
-let auth: any = null
-let googleProvider: any = null
+// Initialize Firebase
+const app = initializeApp(firebaseConfig);
+const analytics = typeof window !== 'undefined' ? getAnalytics(app) : null;
 
-async function initializeFirebase() {
-  if (typeof window === 'undefined') {
-    throw new Error('Firebase can only be initialized in browser context')
-  }
-
-  // Validate config
-  if (!firebaseConfig.apiKey || !firebaseConfig.projectId || !firebaseConfig.authDomain) {
-    throw new Error('Firebase configuration is incomplete. Please check your environment variables.')
-  }
-
-  // Initialize if not already done
-  if (!firebaseApp || !auth) {
-    const { initializeApp, getApps } = await import('firebase/app')
-    const { getAuth: getAuthFn } = await import('firebase/auth')
-    
-    firebaseApp = getApps().length === 0 ? initializeApp(firebaseConfig) : getApps()[0]
-    auth = getAuthFn(firebaseApp)
-  }
-
-  if (!googleProvider) {
-    const { GoogleAuthProvider } = await import('firebase/auth')
-    googleProvider = new GoogleAuthProvider()
-  }
-
-  return { auth, googleProvider }
-}
-
-export async function getAuth() {
-  if (!auth) {
-    await initializeFirebase()
-  }
-  return auth
-}
-
-export async function getGoogleProvider() {
-  if (!googleProvider) {
-    await initializeFirebase()
-  }
-  return googleProvider
-}
-
-export async function signInWithGoogle() {
-  if (typeof window === 'undefined') {
-    throw new Error('signInWithGoogle can only be called on the client')
-  }
-  
-  const { signInWithPopup } = await import('firebase/auth')
-  const { auth: authInstance, googleProvider: provider } = await initializeFirebase()
-  
-  const result = await signInWithPopup(authInstance, provider)
-  const user = result.user
-
-  return {
-    uid: user.uid,
-    email: user.email,
-    name: user.displayName,
-    photoURL: user.photoURL,
-  }
-}
+// Initialize Auth and Google Provider
+export const auth = getAuth(app);
+export const googleProvider = new GoogleAuthProvider();
 

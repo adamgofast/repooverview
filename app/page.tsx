@@ -20,18 +20,17 @@ export default function HomePage() {
       try {
         // Dynamically import Firebase to avoid build-time execution
         const { onAuthStateChanged } = await import('firebase/auth')
-        const { getAuth } = await import('@/lib/client.firebase')
-        const auth = await getAuth()
+        const { auth } = await import('@/lib/client.firebase')
         unsubscribe = onAuthStateChanged(auth, (user) => {
           if (user) {
             router.replace('/dashboard')
           } else {
-            router.replace('/signup')
+            router.replace('/login')
           }
         })
       } catch (error) {
         console.error('Auth check error:', error)
-        router.replace('/signup')
+        router.replace('/login')
       }
     }, 1000)
 
